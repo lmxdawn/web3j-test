@@ -3,8 +3,13 @@ package com.example.web3jtest.web3j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.crypto.*;
-import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.DefaultBlockParameterNumber;
+import org.web3j.protocol.core.Request;
+import org.web3j.protocol.core.methods.response.EthAccounts;
+import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.geth.Geth;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
@@ -18,7 +23,7 @@ import java.math.BigInteger;
 public class Web3jService {
 
     @Resource
-    private Web3j web3j;
+    private Geth web3j;
 
     @Resource
     private Web3jFilterService web3jFilterService;
@@ -36,12 +41,17 @@ public class Web3jService {
                 + web3j.web3ClientVersion().send().getWeb3ClientVersion());
         log.info("Connected to Ethereum version: "
                 + web3j.netVersion().send().getNetVersion());
+        DefaultBlockParameter byNumber = new DefaultBlockParameterNumber(123);
+        Request<?, EthBlock> ethBlockRequest = web3j.ethGetBlockByNumber(byNumber, true);
+        EthBlock ethBlock = ethBlockRequest.send();
+        log.info(String.valueOf(ethBlock.getBlock().getDifficulty()));
+        log.info(ethBlock.getBlock().getDifficultyRaw());
+
 
         // 监听交易
         web3jFilterService.startTransactionListen();
-
         String password = "123";
-        String filePath = "D:\\Geth\\data\\keystore";
+        String filePath = "D:\\javacode\\keystore";
         // 创建钱包文件
         // String fileName = WalletUtils.generateNewWalletFile(
         //         password,
@@ -55,25 +65,25 @@ public class Web3jService {
 
         //  读取钱包文件
         // String walletFilePath = filePath + "\\" + fileName;
-        String walletFilePath = filePath + "\\UTC--2021-07-20T00-48-18.412371200Z--de46b693e94b9186fb2721d110acad6a772c2de5";
+        String walletFilePath = filePath + "\\UTC--2021-07-29T02-37-12.952647100Z--8116b5b7c0d821707e6dee90063943ed9097800e";
         Credentials credentials =
                 WalletUtils.loadCredentials(
                         password,
                         walletFilePath);
         log.info("Credentials loaded 0x" + credentials.getEcKeyPair().getPrivateKey().toString(16));
 
-        String toAddress = "0x376e9f2563b8c8946009894b38b3aa15ce545394";
-
-        // 裸交易
-        BigInteger gasPrice = BigInteger.valueOf(1000);
-        BigInteger gasLimit = BigInteger.valueOf(21000);
-        BigInteger value = Convert.toWei("1", Convert.Unit.ETHER).toBigInteger();
-        String data = "";
-
-        // 通过私钥转账
-        String privateKey = "0x42c6618b306bc09cd08da7c89e3e802c9c91eef33fc24f7b2b4c6bfe51306138";
-        EthSendTransaction ethSendTransaction = web3jTransactionService.transfer(credentials.getAddress(), toAddress, value, privateKey, gasPrice, gasLimit, data);
-        log.info("transactionHash: " + ethSendTransaction.getTransactionHash());
+        // String toAddress = "0x376e9f2563b8c8946009894b38b3aa15ce545394";
+        //
+        // // 裸交易
+        // BigInteger gasPrice = BigInteger.valueOf(1000);
+        // BigInteger gasLimit = BigInteger.valueOf(21000);
+        // BigInteger value = Convert.toWei("1", Convert.Unit.ETHER).toBigInteger();
+        // String data = "";
+        //
+        // // 通过私钥转账
+        // String privateKey = "0x42c6618b306bc09cd08da7c89e3e802c9c91eef33fc24f7b2b4c6bfe51306138";
+        // EthSendTransaction ethSendTransaction = web3jTransactionService.transfer(credentials.getAddress(), toAddress, value, privateKey, gasPrice, gasLimit, data);
+        // log.info("transactionHash: " + ethSendTransaction.getTransactionHash());
 
         // 通过keystore文件转账
         // EthSendTransaction ethSendTransaction2 = web3jTransactionService.transferByKeystoreFile(walletFilePath, password, toAddress, value, gasPrice, gasLimit, data);

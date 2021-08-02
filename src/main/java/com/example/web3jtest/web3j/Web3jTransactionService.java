@@ -5,15 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscription;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.*;
-import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.geth.Geth;
 import org.web3j.utils.Numeric;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class Web3jTransactionService {
 
     @Resource
-    private Web3j web3j;
+    private Geth web3j;
 
     private static final int chainId = 1337;
 
@@ -148,6 +151,37 @@ public class Web3jTransactionService {
         BigInteger nonce = transactionCount.getTransactionCount();
         log.info("transfer nonce : " + nonce);
         return nonce;
+    }
+    public void createAccount() {
+        try {
+            ECKeyPair ecKeyPair = Keys.createEcKeyPair();
+            BigInteger privateKeyInDec = ecKeyPair.getPrivateKey();
+            String privateKey = privateKeyInDec.toString(16);
+            WalletFile aWallet = Wallet.createLight("123", ecKeyPair);
+            String address = aWallet.getAddress();
+            if (address.startsWith("0x")) {
+                address = address.substring(2).toLowerCase();
+            } else {
+                address = address.toLowerCase();
+            }
+            address = "0x" + address;
+            System.out.println("地址：" + address);
+            System.out.println("秘钥：" + privateKey);
+        } catch (InvalidAlgorithmParameterException |
+                CipherException | NoSuchProviderException | NoSuchAlgorithmException e) {
+            System.out.println(e.getCause().toString());
+        }
+    }
+
+    public void createAccount1() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+
+        ECKeyPair ecKeyPair = Keys.createEcKeyPair();//调用Keys的静态方法创建密钥对
+        String privateKey = ecKeyPair.getPrivateKey().toString(16);//获取私钥
+        String publicKey = ecKeyPair.getPublicKey().toString(16);//获取公钥
+        String address = Keys.getAddress(publicKey);//获取地址值
+        System.out.println("Your private key:"+privateKey);
+        System.out.println("Your public key:"+publicKey);
+        System.out.println("Your address:"+address);
     }
 
 }

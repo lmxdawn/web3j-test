@@ -2,7 +2,7 @@ package com.example.web3jtest.web3j;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.web3j.protocol.Web3j;
+import org.web3j.protocol.geth.Geth;
 
 import javax.annotation.Resource;
 
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 public class Web3jFilterService {
 
     @Resource
-    private Web3j web3j;
+    private Geth web3j;
 
     /**
      * 监听每一笔交易
