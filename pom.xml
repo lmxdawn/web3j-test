@@ -15,11 +15,13 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>1.8</java.version>
-<!--        <web3j.version>4.8.5</web3j.version>-->
         <web3j.version>4.8.6</web3j.version>
         <web3j-maven-plugin.version>4.6.5</web3j-maven-plugin.version>
         <exec-maven-plugin>1.6.0</exec-maven-plugin>
-<!--        mvn web3j:generate-sources-->
+        <!-- mvn web3j:generate-sources-->
+        <bitcoinj.version>0.15.10</bitcoinj.version>
+        <guava.version>30.1.1-jre</guava.version>
+
     </properties>
     <dependencies>
         <dependency>
@@ -27,6 +29,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- web3j-->
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
@@ -38,6 +41,20 @@
             <artifactId>geth</artifactId>
             <version>${web3j.version}</version>
         </dependency>
+        <!-- web3j-->
+
+        <!-- bitcoinj-->
+        <dependency>
+            <groupId>org.bitcoinj</groupId>
+            <artifactId>bitcoinj-core</artifactId>
+            <version>${bitcoinj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <!-- bitcoinj-->
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
